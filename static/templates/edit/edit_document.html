@@ -1,0 +1,117 @@
+
+{% extends 'enrichment_base.html' %}
+
+{% block header_fullbase %}
+
+{% endblock %}
+
+{% block content_enrichmentbase %}
+
+<div class="section">
+    <h1>Edit Document {{ name }}</h1>
+<div>
+
+</div>
+
+  </div>
+  
+  <h2 style="text-align:center">Text to Edit</h2>
+  <div class="row">
+    <div class="column">
+      <div class="card">
+        <div class="container">
+          <h2>Text</h2>
+          <p>Some text that describes me lorem ipsum ipsum lorem.</p>
+
+          <p>
+            <button class="button"
+                     {% if not active %}
+                          disabled
+                     {% endif %}
+                     onclick=call_with_link("./edit_text")>
+              Edit Text
+            </button>
+          </p>
+        </div>
+      </div>
+    </div>
+  
+    <div class="column">
+      <div class="card">
+        <div class="container">
+          <h2>Images</h2>
+          <p>Some text that describes me lorem ipsum ipsum lorem.</p>
+
+                    <p>
+            <button class="button"
+                     {% if not (active and has_images)  %}
+                          disabled
+                     {% endif %}
+                     onclick=call_with_link("./edit_images")>
+              Edit Text
+            </button>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  
+    <div class="column">
+      <div class="card">
+        <div class="container">
+          <h2>Tables</h2>
+          <p>Some text that describes me lorem ipsum ipsum lorem.</p>
+
+           <p>
+            <button class="button"
+                     {% if not (active and has_tables) %}
+                          disabled
+                     {% endif %}
+                     onclick=call_with_link("./edit_tables")>
+              Edit Text
+            </button>
+          </p>
+
+                 </div>
+      </div>
+    </div>
+      <p id="hiddenid" hidden>{{id}}</p>
+  </div>
+{% endblock %}
+
+{% block javascript_fullbase %}
+
+function call_with_link(site) {
+        // Get the relevant attributes.
+        let document_id = $('#hiddenid');
+        //console.log(site + "\/?id=" + document_id.text());
+         window.location.href = site + "\/?id=" + document_id.text();
+    }
+
+ function call(site) {
+
+        // Get the relevant attributes.
+        var document_id = $('#hiddenid');
+
+
+        // Call the backend and go to the next site.
+
+            $.post({
+                url: '../enrichment/annotation_results',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                                        'id': document_id.text(),
+                                        "mode": ''
+                                    }),
+                dataType: 'json',
+                success: function (data){
+                    console.log(site + data['url'])
+                    window.location.href = data['url'];
+
+            }
+
+        });
+    }
+{% endblock %}
+
+                

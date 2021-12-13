@@ -1,0 +1,175 @@
+{% extends 'full_base.html' %}
+
+{% block header_fullbase %}
+
+{% endblock %}
+
+{% block content_fullbase %}
+<div class="section">
+</div>
+
+<div>
+  <div style="height: 10px;"></div>
+
+            <table id="document_table" class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Document ID</th>
+                  <th scope="col">Enrichment State</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                   {% for state in status %}
+                     <tr class="clickable-row" id="{{ state["id"] }}">
+                        <td >{{ state["name"] }}</td>
+                        <td>{{ state["state"]}}</td>
+                    </tr>
+                    {% endfor %}
+
+
+              </tbody>
+            </table>
+
+
+
+        <button onClick="window.location.href=window.location.href">Refresh Page</button>
+
+</div>
+<div>
+
+    <div class="container-fluid">
+          <div class="row">
+
+          <div class="col-sm">
+              <div class="card">
+                <div class="container">
+                  <h2>Extracted Data</h2>
+                  <p>Some text that describes me lorem ipsum ipsum lorem.</p>
+                  <p>
+                    <p>
+                       <a href="" id="extracted_data" download="download_file.json">
+                            <button class="button download_extracted_data" disabled type="button">Download</button>
+                        </a>
+                    <p>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm">
+              <div class="card">
+                <div class="container">
+                  <h2>Annotated data</h2>
+                  <p>Some text that describes me lorem ipsum ipsum lorem.</p>
+
+                  <p>
+
+                      <button class="button download_annnotated_data" disabled onclick=call_with_link("./annotation_graph")>Analyse</button>
+                        <a href="" id="annotated_data" download="download_file.json">
+                            <button class="button download_annnotated_data" disabled type="button">Download</button>
+                        </a>
+                    <p>
+                </div>
+               </div>
+
+            </div>
+
+            <div class="col-sm">
+              <div class="card">
+                <div class="container">
+                  <h2> Analysed data</h2>
+                  <p>Some text that describes me lorem ipsum ipsum lorem.</p>
+
+                  <p>
+                      <button  class="button download_analysed_data" disabled onclick=call_with_link("./context_graph")>Analyse</button>
+
+                      <a href="" id="analysed_data" download="download_file.jsonld">
+                            <button class="button download_analysed_data" disabled type="button">Download</button>
+                    </a>
+                    <p>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+</div>
+<script>
+
+
+
+$('#document_table').on('click', 'tbody tr', function(event) {
+
+  $(this).addClass('highlight').siblings().removeClass('highlight');
+
+    $("#extracted_data").attr("href", "/analysis/download_extracted_data/?id=" + this.id)
+    $("#annotated_data").attr("href", "/analysis/download_annotatd_data/?id="  + this.id)
+    $("#analysed_data").attr("href", "/analysis/download_analysed_data/?id="  + this.id)
+});
+
+
+
+
+function call_with_link(site) {
+    var _id = ''
+    // Get the relevant attributes.
+    $(".highlight").each(function() {
+        var _id = this.id;
+         window.location.href = site + "\/?id=" + _id;
+    });
+
+}
+
+$('tbody tr').on('click', function(event) {
+    var text = $(this).text();
+
+
+
+
+    if (text.includes("extracted") ){
+        $(".download_extracted_data").prop('disabled', false);
+        $(".download_annnotated_data").prop('disabled', true);
+        $(".download_analysed_data").prop('disabled', true);
+
+    }
+    if (text.includes("annotated") ){
+        $(".download_extracted_data").prop('disabled', false);
+        $(".download_annnotated_data").prop('disabled', false);
+        $(".download_analysed_data").prop('disabled', true);
+    }
+    if (text.includes("analysed") ){
+        $(".download_extracted_data").prop('disabled', false);
+        $(".download_annnotated_data").prop('disabled', false);
+        $(".download_analysed_data").prop('disabled', false);
+    }
+
+
+});
+
+    function execute_task(site) {
+        // get the ide of the selected document
+        $(".highlight").each(function() {
+            var _id = this.id;
+        // Call the server
+        $.ajax({
+            type: "POST",
+            url: site,
+            contentType: "application/json",
+            data: JSON.stringify({"document_id": _id})
+        });
+        });
+    }
+
+
+
+        
+
+    </script>
+{% endblock %}
+
+
+{% block javascript_fullbase %}
+    
+{% endblock %}

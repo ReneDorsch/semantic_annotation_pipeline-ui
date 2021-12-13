@@ -1,0 +1,194 @@
+
+{% extends 'full_base.html' %}
+
+{% block header_fullbase %}
+
+{% endblock %}
+
+{% block content_fullbase %}
+
+<div class="section">
+
+
+  </div>
+      <div style="height: 10px;"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="column" style="width:50%">
+                <table id="annotation_table" class="table">
+                        <thead>
+                            <th>ID</th>
+                            <th>Category</th>
+                            <th>Labels</th>
+                        </thead>
+                        {%  for kObj in knowledgeObjects %}
+                            <tr>
+                                <td>{{ kObj.id }}</td>
+                                <td>{{ kObj.category }}</td>
+                                <td>{{ ", ".join(kObj.labels) }}</td>
+
+                            </tr>
+                        {% endfor %}
+
+                </table>
+
+        </div>
+        <div class="column"  style="width:50%">
+
+                <div class="text_field">
+                 
+                    <table style="width: 100%" class="table">
+                        <thead>
+                            <tr class="questiontemplate_row">
+                                <th class="questiontemplate_first_col" style="width: 40%;">Something other</th>
+                                <th class="questiontemplate_second_col" style="width: 60%;">Editable</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="questiontemplate_row">
+                                <td class="questiontemplate_first_col">Category:</td>
+                                <td class="questiontemplate_second_col" id="category" contenteditable="true">CompositeElement</td>
+                            </tr>
+                            <tr class="questiontemplate_row">
+                                <td class="questiontemplate_first_col">ID 1:</td>
+                                <td class="questiontemplate_second_col" id="id1" contenteditable="true">1</td>
+                            </tr>
+                            <tr class="questiontemplate_row">
+                                <td class="questiontemplate_first_col">ID 2:</td>
+                                <td class="questiontemplate_second_col" id="id2" contenteditable="true">1</td>
+                            </tr>
+                            <tr class="questiontemplate_row">
+                                <td class="questiontemplate_first_col">Concepts to remove or split:</td>
+                                <td class="questiontemplate_second_col" id="id_concept" contenteditable="true">1</td>
+                            </tr>
+                            <tr class="questiontemplate_row">
+                                <td class="questiontemplate_first_col">Labels that should be added/removed for a concept :</td>
+                                <td class="questiontemplate_second_col" id="labels" contenteditable="true">titanium, cermets</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                  <div class="btn-group d-flex w-100" role="group" aria-label="...">
+
+                        <button onclick=remove() type="button" class="w-100" > Remove</button>
+                        <button onclick=split() type="button" class="w-100" > Split</button>
+                        <button onclick=merge() type="button" class="w-100" > Merge</button>
+                        <button onclick=update_category() type="button" class="w-100" > Change Category </button>
+                    </div>
+                </div>
+
+        </div>
+<p id="hiddenid" hidden>{{id}}</p>
+</div>
+
+{% endblock %}
+
+{% block javascript_fullbase %}
+    var document_id = "{{id}}";
+    function remove(){
+        var id = $("#id_concept").text();
+        console.log(id);
+        $.ajax({
+            type: "PUT",
+            url:  "../edit/annotation/annotation_remove/?document_id=" + document_id ,
+            contentType: "application/json",
+            data: JSON.stringify({"document_id": document_id,
+                                    "data": {"id": id},
+                                    }),
+            success: function(data){
+               $("#annotation_table").html(data['template']);
+    }
+        })
+    }
+
+    function split(){
+        var id = $("#id_concept").text();
+    var labels = $("#labels").text()
+    var category = $("#category").text()
+        console.log(id);
+        $.ajax({
+            type: "PUT",
+            url: "../edit/annotation/annotation_split/?document_id=" + document_id ,
+            contentType: "application/json",
+            data: JSON.stringify({"document_id": document_id,
+                                    "data": {"id": id,
+                                             "labels": labels,
+                                             "category": category},
+
+                                    }),
+                success: function(data){
+$("#annotation_table").html(data['template']);
+    }
+        });
+    }
+
+    function merge(){
+        var id_1 = $("#id1").text();
+        var id_2 = $("#id2").text();
+        console.log(id_1);
+        console.log(id_2);
+        $.ajax({
+            type: "PUT",
+            url: "../edit/annotation/annotation_merge/?document_id=" + document_id ,
+            contentType: "application/json",
+            data: JSON.stringify({"document_id": document_id,
+                                    "data": {
+                                                "id1": id_1,
+                                                "id2": id_2
+                                            },
+                                    }),
+                success: function(data){
+               $("#annotation_table").html(data['template']);
+    }
+        });
+    }
+
+        function update_category(){
+        var id_1 = $("#id1").text();
+        var category = $("#category").text();
+
+        $.ajax({
+            type: "PUT",
+            url: "../edit/annotation/change_category_annotations/?document_id=" + document_id ,
+            contentType: "application/json",
+            data: JSON.stringify({"document_id": document_id,
+                                    "data":{
+                                                "id": id_1,
+                                                "category": category
+                                            }
+                                    }),
+                success: function(data){
+                 $("#annotation_table").html(data['template']);
+            }
+        });
+    }
+
+
+ function call(site) {
+
+        // Get the relevant attributes.
+        var document_id = $('#hiddenid');
+
+
+        // Call the backend and go to the next site.
+
+            $.post({
+                url: '../enrichment/analysis_results',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                                        'id': document_id.text(),
+                                        "mode": ''
+                                    }),
+                dataType: 'json',
+                success: function (data){
+                    console.log(data['url'])
+                    window.location.href = data['url'];
+
+            }
+
+        });
+    }
+
+{% endblock %}
+
+                
