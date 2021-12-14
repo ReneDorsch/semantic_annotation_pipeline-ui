@@ -6,7 +6,8 @@ from internal.internal_datamodels import QuestionTemplateList, QuestionTemplate,
     _AnswerList_, Document
 import json
 from rdflib import BNode, Namespace, RDFS, Literal, URIRef
-
+from config import DATABASE_MAIN_PATH
+import os
 
 class ABCParser(ABC):
 
@@ -34,7 +35,8 @@ class AnswerParser(ABCParser):
     def read_file(self, file: Union[str, Dict]) -> AnswerList:
         res: List[Answer] = []
         if isinstance(file, str):
-            with open(file, 'r') as file:
+            abs_path: str = os.path.join(DATABASE_MAIN_PATH, file)
+            with open(abs_path, 'r') as file:
                 data = json.load(file)
         else:
             data = file
