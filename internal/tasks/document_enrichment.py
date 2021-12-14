@@ -40,7 +40,7 @@ def start_task(document_id: str, index: str, API: str, REQUESTFORMAT, previous_d
 
     api_call = API['BASEURI'] + API['send_to']
     if previous_document is None:
-        file = db.get_file(index, document_id)
+        file = db.get_file(index, document_id, False)
     else:
         file = previous_document.dict()
 

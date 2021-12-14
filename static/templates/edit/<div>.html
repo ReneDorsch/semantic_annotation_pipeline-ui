@@ -1,0 +1,97 @@
+<div>
+    <div class="section">
+    </div>
+    
+      <div style="height: 10px;"></div>
+                <table id="document_table" class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Document ID</th>
+                      <th scope="col">Enrichment State</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+    
+                       {% for state in status %}
+                        <tr class="clickable-row">
+                            <td id="{{ state["id"] }}">{{ state["name"] }}</td>
+                            <td>{{ state["state"]}}</td>
+                        </tr>
+                        {% endfor %}
+    
+    
+                  </tbody>
+                </table>
+    
+    
+    
+            <button onClick="window.location.href=window.location.href">Refresh Page</button>
+    
+    </div>
+    <div>
+    
+    
+        <div class="container-fluid">
+              <div class="row">
+                  <div class="col-sm">
+                  <div class="card">
+                    <div class="container">
+                        <h2>Extract data</h2>
+                        <p>Tasks related to the extraction process.</p>
+        
+                        <p>
+
+                            <button class="button edit" disabled onclick=execute_task("../enrichment/extraction_task")>Start extraction process</button>
+
+                        <p>
+                    </div>
+                   </div>
+    
+                </div>
+                <div class="col-sm">
+                  <div class="card">
+                    <div class="container">
+                      <h2>Edited data</h2>
+                      <p>Tasks related to the data from the extraction process.</p>
+    
+                      <p>
+    
+                          <button class="button extraction" disabled onclick=execute_task("../enrichment/annotation_task")>Start next enrichment process</button>
+                          <button class="button extraction" disabled onclick=call_with_link("./edit_document")>Edit data</button>
+    
+                        <p>
+                    </div>
+                   </div>
+    
+                </div>
+    
+                <div class="col-sm">
+                  <div class="card">
+                    <div class="container">
+                      <h2> Annotated data</h2>
+                      <p>Tasks related to the data from the annotation process.</p>
+    
+                      <p>
+                          <button  class="button annotation" disabled onclick=execute_task("../enrichment/analysis_task")>Start next enrichment process</button>
+                          <button class="button annotation"  disabled onclick=call_with_link("./edit_annotations")>Edit data</button>
+                        <p>
+                    </div>
+                  </div>
+                </div>
+    
+                <div class="col-sm">
+                  <div class="card">
+                    <div class="container">
+                      <h2>Delete data</h2>
+                      <p></p>
+                      <p>
+                        <p>
+                          <button class="button delete" disabled onclick=delete_document()>Delete</button>
+                        <p>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    </div>
