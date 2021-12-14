@@ -3,7 +3,7 @@ import os
 from typing import Dict, Union
 import json
 from json.decoder import JSONDecodeError
-from config import database_folders, indexs, PATH_TO_APP
+from config import DATABASE_INDEX_PATHS, PATH_TO_APP, DATABASE_MAIN_PATH
 from internal.internal_datamodels import Document, QuestionTemplate, QuestionTemplateList
 from typing import List
 from functools import lru_cache
@@ -24,12 +24,13 @@ class Index:
 
     def _create_index(self, path_to_index: str):
         ''' Creates a search index for the files already in the database. '''
-        file_exists: bool = os.path.isfile(path_to_index)
+        abs_path: str = os.path.join(DATABASE_MAIN_PATH, path_to_index)
+        file_exists: bool = os.path.isfile(abs_path)
 
         if not file_exists:
-            os.makedirs(os.path.dirname(path_to_index), exist_ok=True)
+            os.makedirs(os.path.dirname(abs_path), exist_ok=True)
             return {}
-        with open(path_to_index, 'r', encoding='utf-8') as index_file:
+        with open(abs_path, 'r', encoding='utf-8') as index_file:
             try:
                 index = {}
                 zwerg = [IndexElement(**_) for _ in json.load(index_file)]
@@ -75,7 +76,7 @@ class Index:
 class DataBase:
 
 
-    _indexs: Dict[str, Index] = {idx: Index(os.path.join(PATH_TO_APP, path)) for idx, path in indexs.items()}
+    _indexs: Dict[str, Index] = {idx: Index(os.path.join(DATABASE_MAIN_PATH, path)) for idx, path in DATABASE_INDEX_PATHS.items()}
 
 
     def get_file(self, index: str, file_id: str, cached: bool = True) -> Dict:
@@ -96,7 +97,7 @@ class DataBase:
         ''' Loads and returns the document if found else it returns false. '''
         _index = self._indexs[index]
         if file_id in _index.data:
-            path_to_file: str = _index.data[file_id].path
+            path_to_file: str = os.path.join(DATABASE_MAIN_PATH,_index.data[file_id].path)
             with open(path_to_file, "r") as file:
                 data = json.load(file)
             return data
@@ -132,7 +133,8 @@ class DataBase:
                 return False
             else:
                 index.add_id(file.id, file.file_path, file.file_name)
-                with open(file.file_path, 'w') as f:
+                abs_path: str = os.path.join(DATABASE_MAIN_PATH, file.file_path) 
+                with open(abs_path, 'w') as f:
                     f.write(file.to_json())
                 return True
         else:

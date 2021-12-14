@@ -8,7 +8,7 @@ from fastapi.templating import Jinja2Templates
 from database.database import db
 from internal.internal_datamodels import Document, OptionSelection
 import starlette.datastructures as star_data
-from config import DATABASE_PATHS
+from config import DATABASE_INDEX_PATHS, DATABASE_FOLDERS
 from internal.tasks import document_enrichment as enrichment
 from pydantic import BaseModel
 
@@ -75,7 +75,7 @@ async def upload_file(request: Request):
                 "file_name": upload_file.filename,
                 "base64_file": base64.urlsafe_b64encode(file).decode('utf-8'),
                 "id": id,
-                "file_path": os.path.join(DATABASE_PATHS['upload'], f"{id}.json")
+                "file_path": os.path.join(DATABASE_FOLDERS['upload'], f"{id}.json")
             })
             db.add_file(doc, 'upload')
         else:

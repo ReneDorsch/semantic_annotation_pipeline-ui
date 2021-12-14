@@ -4,7 +4,7 @@ from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from database.database import db
 from internal.utils import post_file, get_response_code, get_response
-from config import EXTRACTION_MODULE_API, ANNOTATION_MODULE_API, ANALYSIS_MODULE_API, DATABASE_PATHS
+from config import DATABASE_FOLDERS, EXTRACTION_MODULE_API, ANNOTATION_MODULE_API, ANALYSIS_MODULE_API, DATABASE_INDEX_PATHS
 from static.routers.requestTypes import ExtractionInput, AnalysisInput, AnnotationInput, LogFile, HypothesisList, Image, Row, Column
 from internal.internal_datamodels import Document, Author, Reference, Metadata
 import os
@@ -69,7 +69,7 @@ def start_extraction(id: str, mapping_func: Callable = None):
     wait_for_response(id, EXTRACTION_MODULE_API)
     data = get_data(id, EXTRACTION_MODULE_API)
 
-    file_path = os.path.join(DATABASE_PATHS['extract'], f"{id}.json")
+    file_path = os.path.join(DATABASE_FOLDERS['extract'], f"{id}.json")
     data.update({'file_name': file['file_name'],
                  'file_path': file_path})
 
@@ -129,7 +129,7 @@ def start_annotation(id: str, document: Union[Document, None] = None, mapping_fu
     wait_for_response(id, ANNOTATION_MODULE_API)
     data = get_data(id, ANNOTATION_MODULE_API)
 
-    file_path = os.path.join(DATABASE_PATHS['annotate'], f"{id}.json")
+    file_path = os.path.join(DATABASE_FOLDERS['annotate'], f"{id}.json")
     data.update({'file_name': file['file_name'],
                  'file_path': file_path})
 
@@ -148,7 +148,7 @@ def start_analysis(id: str, document: Union[Document, None] = None, mapping_func
     wait_for_response(id, ANALYSIS_MODULE_API)
     data = get_data(id, ANALYSIS_MODULE_API)
 
-    file_path = os.path.join(DATABASE_PATHS['analyse'], f"{id}.json")
+    file_path = os.path.join(DATABASE_FOLDERS['analyse'], f"{id}.json")
 
     doc = LogFile(**data)
     doc.id = doc.document_id
