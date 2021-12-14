@@ -13,4 +13,3 @@ conda activate NEW_ENVIRONMENT_NAME
 pip install -r requirements.txt
 `
 ### Download and install the other modules, to execute the annotation process.
-ToDo: Add links to repositories.
