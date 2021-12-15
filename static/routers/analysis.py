@@ -5,6 +5,9 @@ from database.database import db
 from internal.tasks.document_analysis import create_annotation_graph, create_context_graph, get_download_link
 from internal.internal_datamodels import Document
 from typing import List
+from config import DATABASE_MAIN_PATH
+import os
+
 templates = Jinja2Templates(directory="static/templates")
 analysis_templates = Jinja2Templates(directory="static/templates/analysis")
 router = APIRouter(
@@ -68,12 +71,12 @@ async def read_item(request: Request, id: str):
 async def read_item(request: Request, id: str):
     file = db.get_file('annotate', id)
     doc = Document(**file)
-    path = doc.file_path
-    return path
+    abs_path = os.path.join(DATABASE_MAIN_PATH, doc.file_path)
+    return abs_path
 
 @router.get("/download_extracted_data", response_class=FileResponse)
 async def read_item(request: Request, id: str):
     file = db.get_file('extract', id)
     doc = Document(**file)
-    path = doc.file_path
-    return path
+    abs_path = os.path.join(DATABASE_MAIN_PATH, doc.file_path)
+    return abs_path

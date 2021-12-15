@@ -111,7 +111,7 @@ def get_download_link(document: Document) -> str:
     res = g.get_graph(answers, linked_data_format=True)
 
     file_path = os.path.join(PATH_TO_TMP, f"{document.id}.json_ld")
-    with open(file_path, "w") as file:
+    with open(file_path, "w", encoding="utf-8") as file:
         file.write(res)
 
     return file_path
